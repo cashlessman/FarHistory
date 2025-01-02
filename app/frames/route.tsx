@@ -163,8 +163,6 @@ const frameHandler = frames(async (ctx) => {
     console.log("Using FID from state:", fid);
   }
 
-  console.log("Final FID used:", fid);
-
   const shouldFetchData =
     fid && (!userData || (userData as UserData).fid !== fid);
 
@@ -174,8 +172,7 @@ const frameHandler = frames(async (ctx) => {
 
 let percent: string | null = null;
 percent= (( Number(Number(lastFid?.rFid)-Number(userData?.fid)) / Number((lastFid?.rFid)))*100).toFixed(1);
-console.log("Perrcent is:", percent);
-console.log(created?.timeCreated)
+
 let timestamp= Number(created?.timeCreated);
 
 const formattedDate = formatDate(timestamp); // Format the date
@@ -206,18 +203,25 @@ const timeAgo = getTimeAgo(timestamp); // Get time ago
 
     // Function to calculate time ago
     function getTimeAgo(timestamp: number): string {
-      const now = Date.now(); // Current time in milliseconds
-      const totalSeconds = Math.floor((now - timestamp * 1000) / 1000);
+      const now = new Date();
+      const past = new Date(timestamp * 1000);
     
-      const secondsInAMinute = 60;
-      const secondsInAnHour = secondsInAMinute * 60;
-      const secondsInADay = secondsInAnHour * 24;
-      const secondsInAMonth = secondsInADay * 30; // Approximation
-      const secondsInAYear = secondsInADay * 365; // Approximation
+      let years = now.getFullYear() - past.getFullYear();
+      let months = now.getMonth() - past.getMonth();
+      let days = now.getDate() - past.getDate();
     
-      const years = Math.floor(totalSeconds / secondsInAYear);
-      const months = Math.floor((totalSeconds % secondsInAYear) / secondsInAMonth);
-      const days = Math.floor((totalSeconds % secondsInAMonth) / secondsInADay);
+      // Adjust for negative days
+      if (days < 0) {
+        months -= 1;
+        const previousMonth = new Date(now.getFullYear(), now.getMonth(), 0); // Last day of the previous month
+        days += previousMonth.getDate();
+      }
+    
+      // Adjust for negative months
+      if (months < 0) {
+        years -= 1;
+        months += 12;
+      }
     
       const timeAgoParts = [];
       if (years > 0) {
