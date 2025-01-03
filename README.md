@@ -31,7 +31,7 @@ Check out the live version at [https://warpcast.com](https://warpcast.com/cashle
 ### Steps
 1. Clone this repository:
     ```bash
-    git clone https://github.com/sah-ban/farcaster-joined.git
+    git clone https://github.com/cashlessman/FarHistory.git
     ```
 
 2. Install dependencies:
